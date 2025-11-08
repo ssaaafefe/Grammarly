@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>CORS demo</title>
+</head>
+<body>
+  <h1>CORS demo</h1>
+  <pre id="out">Click "Run test" to fetch cross-origin resource</pre>
+  <button id="btn">Run test</button>
+
+<script>
+const OUT = document.getElementById('out');
+document.getElementById('btn').onclick = async () => {
+  OUT.textContent = 'Requesting...';
+  try {
+    // change this to the target you want to demonstrate (example uses robots.txt)
+    const target = 'https://click.grammarly.com/robots.txt';
+
+    // fetch with credentials to show Access-Control-Allow-Credentials effect
+    const res = await fetch(target, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'include'   // important to include cookies / credentials
+    });
+
+    // status and headers visible to JS only when server allows the origin
+    OUT.textContent = 'Status: ' + res.status + '\n\nHeaders:\n';
+    for (const pair of res.headers.entries()) {
+      OUT.textContent += pair[0] + ': ' + pair[1] + '\n';
+    }
+
+    const text = await res.text();
+    OUT.textContent += '\n\nBody (first 1000 chars):\n' + text.slice(0,1000);
+  } catch (err) {
+    OUT.textContent = 'Fetch failed: ' + err;
+  }
+};
+</script>
+</body>
+</html>
